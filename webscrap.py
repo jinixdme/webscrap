@@ -1,13 +1,17 @@
 import requests, bs4
 
-res = requests.get('https://countrymeters.info/de/Germany')
-res.raise_for_status()
-soup = bs4.BeautifulSoup(res.text, "lxml")
+def webscrap(url, *ids):
+    values = []
+    res = requests.get(url)
+    res.raise_for_status()
+    soup = bs4.BeautifulSoup(res.text, "lxml")
 
-elems = soup.select('#cp7')
-burn = int(elems[0].getText().replace(' ', ''))
+    for id in ids:
+        elems = soup.select("#" + id)
+        values.append(int(elems[0].getText().replace(' ', '')))
 
-elems = soup.select('#cp9')
-dead = int(elems[0].getText().replace(' ', ''))
+    return values
 
-print(burn - dead)
+# get burn - dead
+result = webscrap('https://countrymeters.info/de/Germany', 'cp7', 'cp9')
+print(result[0] - result[1])
